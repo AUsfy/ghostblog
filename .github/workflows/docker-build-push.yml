@@ -1,0 +1,20 @@
+name: Docker Image Build & Push to ACR
+
+on: [workflow_dispatch]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag ${{ vars.ACR_NAME }}.azurecr.io/ghost
+    - name: Push the image to ACR
+      run: |
+        echo ${{ secrets.ACR_ACCESS_KEY }} | docker login ${{ vars.ACR_NAME }}.azurecr.io -u ${{ vars.ACR_NAME }} --password-stdin 
+        docker push ${{ vars.ACR_NAME }}.azurecr.io/ghost
+      
+  
